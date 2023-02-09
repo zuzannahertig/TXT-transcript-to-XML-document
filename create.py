@@ -163,9 +163,11 @@ def write_xml(xmlfile, table_of_contents, segments, utterances, footnotes, edito
             speaker = segment[0]
             utterance = segment[1]
             side_comments = re.findall(r'(\(.*?\))', utterance)
+            tagged = []
             for comment in side_comments:
-                if comment in utterance:
+                if comment in utterance and comment not in tagged:
                     utterance = utterance.replace(comment, f'<side_comment>{comment}</side_comment>\n')
+                    tagged.append(comment)
             for footnote in footnotes:
                 if footnote in utterance:
                     utterance = utterance.replace(footnote, f'<footnote>{footnote}</footnote>\n')
