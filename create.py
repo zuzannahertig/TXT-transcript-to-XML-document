@@ -146,7 +146,7 @@ def write_xml(xmlfile, table_of_contents, segments, utterances, footnotes, edito
         for e, data in enumerate(table_of_contents):
             f.write(f"<{info[e]}>{data}</{info[e]}>\n")
         f.write("</header>\n")
-        f.write("<transcript>\n")
+        f.write("<table_of_contents>\n")
         for i in segment_dicts:
             i = list(i.values())
             point = ' '.join(i[0])
@@ -157,7 +157,9 @@ def write_xml(xmlfile, table_of_contents, segments, utterances, footnotes, edito
                 name = element[0]
                 rest = element[1]
                 f.write(f"<speech_page><speaker>{name}</speaker>{rest}</speech_page>\n")
-    
+        f.write("</table_of_contents>\n")
+
+        f.write("<transcript>\n")
         for i in utterances:                
             segment = i.split(':', 1)
             speaker = segment[0]
@@ -172,8 +174,10 @@ def write_xml(xmlfile, table_of_contents, segments, utterances, footnotes, edito
                 if footnote in utterance:
                     utterance = utterance.replace(footnote, f'<footnote>{footnote}</footnote>\n')
 
-            f.write(f"<utterance><speaker>{speaker}</speaker>{utterance}</utterance>\n")
-
+            f.write(f"<utterance presented='True'><speaker>{speaker}</speaker>{utterance}</utterance>\n")
+        f.write("</transcript>\n")
+        f.write("<appendix>\n")
+        
         for i in appendix:
             i = list(i.values())
             if len(i[0]) > 0:
@@ -183,9 +187,9 @@ def write_xml(xmlfile, table_of_contents, segments, utterances, footnotes, edito
                 speech = ' '.join(i[2])
                 f.write(f'<speaker>{name}</speaker>\n')
                 f.write(f'<party>{party}</party>\n')
-                f.write(f'<utterance>{speech}</utterance></speech>\n')
-
-        f.write("</transcript>\n")
+                f.write(f'<utterance presented="False">{speech}</utterance></speech>\n')
+        
+        f.write("</appendix>\n")
 
         if copies in editorial_note:
             editorial_note = editorial_note.replace(copies, f'<copies>{copies}</copies>\n')
